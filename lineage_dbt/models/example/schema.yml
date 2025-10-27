@@ -1,0 +1,41 @@
+
+version: 2
+
+models:
+  - name: my_first_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - unique
+          - not_null
+
+  - name: my_second_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - unique
+          - not_null
+
+sources:
+  - name: raw
+    description: "Raw data sources from various APIs"
+    schema: raw
+    tables:
+      - name: fred_data
+        identifier: FRED_DATA
+        description: "Raw FRED economic data from Federal Reserve API"
+        columns:
+          - name: series_id
+            description: "FRED series identifier (e.g., GDPC1, UNRATE)"
+          - name: indicator_name
+            description: "Human-readable name of the economic indicator"
+          - name: observation_date
+            description: "Date of the economic observation"
+          - name: value
+            description: "Numeric value of the economic indicator"
+          - name: file_load_date
+            description: "Date when the data was loaded from JSON files"

@@ -1,0 +1,17 @@
+# dbt Profile Configuration Template
+# Copy this file to profiles.yml and update with your Snowflake credentials
+
+lineage_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: YOUR_ACCOUNT_NAME
+      user: YOUR_USERNAME
+      password: YOUR_PASSWORD
+      role: SYSADMIN
+      warehouse: YOUR_WAREHOUSE
+      database: YOUR_DATABASE
+      schema: SILVER
+      threads: 4
+      client_session_keep_alive: False

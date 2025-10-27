@@ -1,0 +1,141 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =========================
+# Environment & Secrets
+# =========================
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.env
+.env.*
+
+# Snowflake credentials
+profiles.yml
+.snowflake/
+
+# =========================
+# Data Files
+# =========================
+data/raw/*.json
+data/processed/
+data/staging/
+*.csv
+*.parquet
+*.xlsx
+*.json
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# =========================
+# dbt
+# =========================
+lineage_dbt/target/
+lineage_dbt/dbt_packages/
+lineage_dbt/logs/
+lineage_dbt/.user.yml
+
+# =========================
+# DataHub
+# =========================
+datahub/
+.datahub/
+
+# =========================
+# IDEs & Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# =========================
+# OS Generated Files
+# =========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Desktop.ini
+$RECYCLE.BIN/
+
+# =========================
+# Docker
+# =========================
+docker-compose.yml
+.dockerignore
+
+# =========================
+# Temporary Files
+# =========================
+*.tmp
+*.temp
+.cache/
+.pytest_cache/
+
+# =========================
+# Database
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Documentation
+# =========================
+site/
+docs/_build/
+
+# =========================
+# Configuration Overrides
+# =========================
+config/local.py
+config/local.yml
+local_settings.py
+
+# =========================
+# Package Management
+# =========================
+Pipfile.lock
+poetry.lock
+requirements-dev.txt
