@@ -41,6 +41,9 @@ Raw JSON → data/raw/ → RAW.FRED_DATA → SILVER → Business Intelligence
 ```bash
 # Install Python dependencies
 pip install snowflake-connector-python dbt-snowflake python-dotenv requests
+
+# Install DataHub CLI with dbt extras (for lineage ingest)
+pip install "acryl-datahub[dbt]"
 ```
 
 ### Environment Setup
@@ -72,6 +75,53 @@ python snowflake_load/load_to_snowflake.py
 cd lineage_dbt
 dbt debug  # Test connection
 dbt run     # Run all transformations
+dbt test    # Run data quality tests (Assertions in DataHub)
+dbt docs generate  # Generate manifest.json & catalog.json
+```
+
+### 4. Bring up DataHub (optional but recommended)
+```bash
+# From repository root
+docker compose up -d
+# UI: http://localhost:9002 , GMS API: http://localhost:8080
+```
+
+### 5. Ingest dbt metadata to DataHub
+```bash
+# From repository root
+datahub ingest -c configs/dbt_to_datahub.yml
+```
+Notes:
+- The recipe points to `lineage_dbt/target/manifest.json` and `catalog.json` and ingests models, sources, and tests as Assertions.
+- On Windows, ensure the shell is UTF-8 if you see Unicode errors:
+  - PowerShell one-off: `$env:PYTHONUTF8 = "1"`
+
+### (Optional) Ingest Snowflake metadata to DataHub
+Create `configs/snowflake_to_datahub.yml` with env vars (avoid committing secrets):
+```yaml
+source:
+  type: snowflake
+  config:
+    account_id: "${SNOWFLAKE_ACCOUNT}"
+    username: "${SNOWFLAKE_USER}"
+    password: "${SNOWFLAKE_PASSWORD}"
+    database_pattern:
+      allow:
+        - "DATAHUB_DEMO"
+    include_table_lineage: true
+    include_view_lineage: true
+    profiling:
+      enabled: false
+
+sink:
+  type: datahub-rest
+  config:
+    server: "http://localhost:8080"
+```
+Run:
+```bash
+$env:SNOWFLAKE_ACCOUNT="..."; $env:SNOWFLAKE_USER="..."; $env:SNOWFLAKE_PASSWORD="..."
+datahub ingest -c configs/snowflake_to_datahub.yml
 ```
 
 ## 📊 Data Models
@@ -108,6 +158,24 @@ dbt run     # Run all transformations
 └── README.md
 ```
 
+### Where to add quality tests (dbt)
+
+- Place tests inside the `schema.yml` files alongside your models.
+  - Example in this repo: `lineage_dbt/models/example/schema.yml`
+  - Add tests under each model's `columns: ... data_tests:` block.
+- Add new models under:
+  - `lineage_dbt/models/example/silver/` for cleaned views/tables
+  - `lineage_dbt/models/example/gold/` for analytics views
+- After editing tests/models:
+  ```bash
+  cd lineage_dbt
+  dbt run            # build models
+  dbt test           # run quality tests
+  dbt docs generate  # refresh manifest.json & catalog.json
+  cd ..
+  datahub ingest -c configs/dbt_to_datahub.yml  # publish to DataHub (Assertions)
+  ```
+
 ## 🔄 Data Lineage
 
 ```mermaid
@@ -129,6 +197,10 @@ dbt test
 # Check data freshness
 dbt source freshness
 ```
+Included tests (Assertions in DataHub):
+- `fred_clean`: not_null on key columns, accepted_values for `series_id`
+- `yearly_averages`, `yoy_changes`, `real_interest_rates`: not_null on output columns
+- Starter models `my_first_dbt_model`, `my_second_dbt_model` have tests marked as severity=warn until those models are materialized
 
 ## 🏃‍♂️ Running the Full Pipeline
 

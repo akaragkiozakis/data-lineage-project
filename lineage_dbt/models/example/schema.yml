@@ -8,7 +8,79 @@ models:
       - name: id
         description: "The primary key for this table"
         data_tests:
-          - unique
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+
+  - name: fred_clean
+    description: "Cleaned FRED data with standardized types"
+    columns:
+      - name: series_id
+        description: "FRED series identifier"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["GDPC1", "CPIAUCSL", "PCE", "UNRATE", "INDPRO", "FEDFUNDS"]
+      - name: observation_date
+        description: "Date of observation"
+        data_tests:
+          - not_null
+      - name: value
+        description: "Numeric value"
+        data_tests:
+          - not_null
+      - name: file_load_date
+        description: "Ingestion date"
+
+  - name: yearly_averages
+    description: "Average annual values per indicator"
+    columns:
+      - name: series_id
+        data_tests:
+          - not_null
+      - name: indicator_name
+        data_tests:
+          - not_null
+      - name: year
+        data_tests:
+          - not_null
+      - name: avg_value
+        data_tests:
+          - not_null
+
+  - name: yoy_changes
+    description: "Year-over-year percentage changes per indicator"
+    columns:
+      - name: series_id
+        data_tests:
+          - not_null
+      - name: indicator_name
+        data_tests:
+          - not_null
+      - name: year
+        data_tests:
+          - not_null
+      - name: yoy_change_pct
+        data_tests: []
+
+  - name: real_interest_rates
+    description: "Real interest rate = Fed Funds - Inflation"
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: inflation_rate
+        data_tests:
+          - not_null
+      - name: fed_funds_rate
+        data_tests:
+          - not_null
+      - name: real_interest_rate
+        data_tests:
           - not_null
 
   - name: my_second_dbt_model
@@ -17,8 +89,12 @@ models:
       - name: id
         description: "The primary key for this table"
         data_tests:
-          - unique
-          - not_null
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
 
 sources:
   - name: raw

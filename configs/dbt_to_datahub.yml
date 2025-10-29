@@ -1,0 +1,12 @@
+source:
+  type: dbt
+  config:
+    manifest_path: "lineage_dbt/target/manifest.json"
+    catalog_path: "lineage_dbt/target/catalog.json"   
+    # sources_path intentionally omitted: sources are read from manifest.json
+    target_platform: "snowflake"
+
+sink:
+  type: datahub-rest
+  config:
+    server: "http://localhost:8080"
