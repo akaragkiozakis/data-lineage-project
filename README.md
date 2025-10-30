@@ -176,17 +176,10 @@ datahub ingest -c configs/snowflake_to_datahub.yml
   datahub ingest -c configs/dbt_to_datahub.yml  # publish to DataHub (Assertions)
   ```
 
-## 🔄 Data Lineage
 
-```mermaid
-graph LR
-    A[FRED API] --> B[JSON Files]
-    B --> C[RAW.FRED_DATA]
-    C --> D[SILVER.FRED_CLEAN]
-    D --> E[GOLD.YEARLY_AVERAGES]
-    D --> F[GOLD.YOY_CHANGES]  
-    D --> G[GOLD.REAL_INTEREST_RATES]
-```
+## 🔄 Data Lineage Overview
+
+The pipeline ingests economic data from the FRED API, stores raw JSON files, loads them into Snowflake (RAW layer), and applies dbt transformations to produce analytics-ready tables (Silver/Gold layers). DataHub can be used to track lineage and metadata across all stages.
 
 ## 📋 Data Quality & Testing
 
